@@ -58,6 +58,7 @@ export class JugadorService {
     let { genero = 0, cantidad = 4, grupo = 0 } = generadorJugadorDto;
 
     let valcant: boolean | number = false;
+    let jugadores;
 
     if(cantidad % 2 == 0)
       grupo = cantidad/2;
@@ -69,9 +70,14 @@ export class JugadorService {
       throw new BadRequestException(`La cantidad o el grupo debe ser par`);
 
     if(genero == 0 || genero == 1)
-      return await this.jugadorModel.find({genero}).limit(valcant).select('-__v');
+      jugadores = await this.jugadorModel.find({genero}).limit(valcant).select('-__v');
 
-    throw new BadRequestException(`Ocurrio un error - getList`);
+    if(jugadores.length == valcant){
+      return jugadores;
+    }else{
+      throw new BadRequestException(`No hay suficientes jugadores para el torneo - ${jugadores.length} de ${valcant}`);
+    }
+
   }
 
   async update(term: string, updateJugadorDto: UpdateJugadorDto) {

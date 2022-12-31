@@ -17,6 +17,6 @@ import { ConfigModule } from '@nestjs/config';
       }
     ])
   ],
-  exports: [MongooseModule]
+  exports: [MongooseModule, JugadorService]
 })
 export class JugadorModule {}
