@@ -11,8 +11,10 @@ export class Torneo {
         type: Types.ObjectId, 
         ref: Jugador.name 
     })
-    ganador: Jugador | Types.ObjectId;
+    ganador: Jugador;
 
+    @Prop()
+    historialPartidos: any[];
 }
 
 export const TorneoSchema = SchemaFactory.createForClass(Torneo);

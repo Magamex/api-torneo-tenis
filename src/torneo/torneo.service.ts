@@ -4,9 +4,11 @@ import { CreateTorneoDto } from './dto/create-torneo.dto';
 import { UpdateTorneoDto } from './dto/update-torneo.dto';
 import { JugadorService } from '../jugador/jugador.service';
 import { GeneradorJugadorDto } from '../jugador/dto/generador-jugador.dto';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Torneo } from './entities/torneo.entity';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { NotFoundException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class TorneoService {
@@ -20,6 +22,8 @@ export class TorneoService {
   async simularTorneo(generarJugadorDto: GeneradorJugadorDto) {
     let jugadores = await this.jugadorService.getList(generarJugadorDto);
     let pilaJugadores = [...jugadores];
+
+    const historialPartidos = [];
 
     console.log('COMIENZA TORNEO')
     console.log(pilaJugadores)
@@ -36,6 +40,12 @@ export class TorneoService {
 
       pilaJugadores.unshift(ganador);
 
+      historialPartidos.push({
+        jugador1: jugador1.nombre,
+        jugador2: jugador2.nombre,
+        ganador: ganador.nombre
+      })
+
       console.log(pilaJugadores)
     }
   
@@ -43,14 +53,11 @@ export class TorneoService {
     console.log('FIN TORNEO')
 
     try {
-      const torneo = await this.torneoModel.create({fecha: new Date(), ganador: pilaJugadores[0]})
+      const torneo = await this.torneoModel.create({fecha: new Date(), ganador: pilaJugadores[0], historialPartidos})
       return torneo;
     } catch (error){
       this.handleExceptions(error);
     }
-
-    // return pilaJugadores[0];
-
 
   }
 
@@ -78,24 +85,34 @@ export class TorneoService {
     }
   }
 
-  create(createTorneoDto: CreateTorneoDto) {
-    return 'This action adds a new torneo';
+  findAll(paginationDto:PaginationDto) {
+    const {limit=10, offset=0} = paginationDto;
+
+    return this.torneoModel.find()
+      .skip(offset)
+      .limit(limit)
+      .select('-__v')
   }
 
-  findAll() {
-    return `This action returns all torneo`;
+  async findOne(term: string) {
+    let torneo: Torneo;
+
+    if(!torneo && isValidObjectId(term))
+      torneo = await this.torneoModel.findById(term);
+
+    if(!torneo)
+      throw new NotFoundException(`Torneo: ${term} - no encontrado`);
+
+    return torneo;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} torneo`;
-  }
+  async remove(id: string) {
+    const { deletedCount } = await this.torneoModel.deleteOne({_id: id});
 
-  update(id: number, updateTorneoDto: UpdateTorneoDto) {
-    return `This action updates a #${id} torneo`;
-  }
+    if(deletedCount === 0)
+      throw new NotFoundException(`Torneo: ${id} - no existe`);
 
-  remove(id: number) {
-    return `This action removes a #${id} torneo`;
+    return;
   }
 
   private handleExceptions(error: any){

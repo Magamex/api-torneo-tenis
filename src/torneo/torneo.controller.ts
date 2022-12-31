@@ -1,36 +1,30 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { TorneoService } from './torneo.service';
-import { CreateTorneoDto } from './dto/create-torneo.dto';
-import { UpdateTorneoDto } from './dto/update-torneo.dto';
 import { GeneradorJugadorDto } from '../jugador/dto/generador-jugador.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id.pipe';
 
 @Controller('torneo')
 export class TorneoController {
   constructor(private readonly torneoService: TorneoService) {}
-
 
   @Post('generar')
   create(@Body() generadorJugadorDto: GeneradorJugadorDto) {
     return this.torneoService.simularTorneo(generadorJugadorDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.torneoService.findAll();
-  // }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.torneoService.findOne(+id);
+  @Get()
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.torneoService.findAll(paginationDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTorneoDto: UpdateTorneoDto) {
-    return this.torneoService.update(+id, updateTorneoDto);
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.torneoService.findOne(term);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.torneoService.remove(+id);
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
+    return this.torneoService.remove(id);
   }
 }
