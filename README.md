@@ -38,11 +38,18 @@ docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
 ```
 #### En .env.prod esta configurado para que el contenedor que se arma se conecte a una base de datos de mongo atlas
 
-## Intente subir esto azure pero no tuve exito por eso lo dejo como esta
+## Intente subir esto azure y aws pero no lo logre a si que encontre una alternativa 
+llamada render... Dejo la URL https://api-torneo.onrender.com/api 
 
 ## Para visualizar la documentacion swagger
 ![image](https://user-images.githubusercontent.com/11765730/210153386-f158cd2f-6d3b-4417-abb3-12a4f982e3be.png)
 
+Si se ejecuta local...
 ```
 localhost:3000/api
+```
+
+Desde Render
+```
+https://api-torneo.onrender.com/api
 ```
