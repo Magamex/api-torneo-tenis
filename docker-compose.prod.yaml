@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  tenisapp:
+    depends_on:
+      - db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: tenis-docker
+    container_name: tenisapp
+    restart: always
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      MONGODB: ${MONGODB}
+      PORT: ${PORT}
+      DEFAULT_LIMIT: ${DEFAULT_LIMIT}
+
+  db:
+    image: mongo:5
+    container_name: mongo-tenis
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_DATABASE: nest-tenis
+    volumes:
+      - ./mongo:/data/db
