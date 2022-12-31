@@ -25,6 +25,8 @@ docker-compose up -d
 yarn start:dev
 ```
 
+#### En las .env esta configurado con un volume de la carpeta mongo
+
 ## Stack tecnológico
 * MongoDB
 * NestJS
@@ -34,8 +36,13 @@ yarn start:dev
 ```
 docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
 ```
+#### En .env.prod esta configurado para que el contenedor que se arma se conecte a una base de datos de mongo atlas
+
+## Intente subir esto azure pero no tuve exito por eso lo dejo como esta
 
 ## Para visualizar la documentacion swagger
+![image](https://user-images.githubusercontent.com/11765730/210153386-f158cd2f-6d3b-4417-abb3-12a4f982e3be.png)
+
 ```
 localhost:3000/api
 ```
